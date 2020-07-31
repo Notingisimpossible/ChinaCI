@@ -33,5 +33,5 @@ app.use(product.routes(), product.allowedMethods());
 app.use(order.routes(), order.allowedMethods());
 
 
-console.log("服务器正在运行：localhost:8080")
+console.log(`服务器正在运行：http://localhost:8080`)
 app.listen(8080)

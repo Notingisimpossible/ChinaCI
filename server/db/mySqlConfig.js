@@ -46,10 +46,14 @@ const deleteUser = (id) => {
 }
 // 添加用户
 const addUser = (data) => {
-  let _sql = `insert into users where id=?,first_name=?,last_name=?,email=?;`
+  let _sql = `insert into users set id=?,first_name=?,last_name=?,email=?;`
   return service.query(_sql,data)
 }
-
+// 查找用户
+const findUser = (id) => {
+  let _sql = `select * from users where id=${id}`
+  return service.query(_sql)
+}
 // 获取所有的产品信息
 const getAllProduct = () => {
   let _sql = "select * from products"
@@ -62,8 +66,13 @@ const deleteProduct = (id) => {
 }
 // 添加产品
 const addProduct = (data) => {
-  let _sql = `insert into products where id=?,name=?,description=?,weight=?;`
+  let _sql = `insert into products set id=?,name=?,description=?,weight=?;`
   return service.query(_sql,data)
+}
+// 查找订单
+const findProduct = (id) => {
+  let _sql = `select * from products where id=${id}`
+  return service.query(_sql)
 }
 
 // 获取所有订单信息
@@ -78,19 +87,28 @@ const deleteOrder = () => {
 }
 // 添加订单
 const addOrder = (data) => {
-  let _sql = "insert into orders where id=?,order_data=?,purchaser=?,quantity=?,product_id=?"
+  let _sql = "insert into orders set id=?,order_data=?,purchaser=?,quantity=?,product_id=?"
   return service.query(_sql, data)
 } 
+// 查找订单
+const findOrder = (id) => {
+  let _sql = `select * from orders where id=${id}`
+  return service.query(_sql)
+}
 
 // 抛出方法
 module.exports = {
   getAllUser,
   deleteUser,
+  addUser,
+  findUser,
   getAllProduct,
   deleteProduct,
   addProduct,
+  findProduct,
   getAllOrder,
   deleteOrder,
-  addOrder
+  addOrder,
+  findOrder
 }
 
