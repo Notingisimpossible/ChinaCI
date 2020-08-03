@@ -1,5 +1,6 @@
 const router = require('koa-router')()
 const sqlServer = require('../db/mySqlConfig')
+const expectionHandle = require('../expectionHandle')
 // 路由前缀
 router.prefix('/user')
 
@@ -13,12 +14,7 @@ router.get('/all',async (ctx, next) => {
 // 删除指定用户
 router.del('/delete/:id',async (ctx, next) => {
   let id = parseInt(ctx.params.id) || ""
-  if(!id){
-    ctx.body = {
-      code: 400,
-      Error: "id不能为空"
-    }
-  }else{
+  try {
     await sqlServer.findUser(id)
     .then(async res => {
       if(res.length){
@@ -26,32 +22,28 @@ router.del('/delete/:id',async (ctx, next) => {
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
-            ctx.body = {
-              code:200,
-              message:"删除成功"
-            }
+            ctx.body = expectionHandle.success("删除成功")
           }else{
             ctx.status = 406
-            ctx.body = {
-              code: 406,
-              message:"删除失败"
-            }
+            ctx.body = expectionHandle.faild("删除失败")
           }
         })
         .catch(err => {
+          ctx.body = expectionHandle.catchError(err)
           console.log(err)
         })
       }else{
         // ctx.status = 204
-        ctx.body = {
-          code:204,
-          message:"无效id"
-        }
+        ctx.body = expectionHandle.invalidId()
       }
     })
     .catch(err => {
+      ctx.body = expectionHandle.catchError(err)
       console.log(err)
     })
+  } catch (error) {
+    ctx.body = expectionHandle.existenceId()
+    console.log(error)
   }
 })
 // 添加用户
@@ -61,64 +53,47 @@ router.post('/add', async (ctx,next) => {
   let first_name = ctx.request.body.first_name || ""
   let last_name = ctx.request.body.last_name || ""
   let email = ctx.request.body.email || ""
-  if(!id){
-    ctx.body = {
-      code: 400,
-      Error: "id不能为空"
-    }
-  }else{
+  try {
     await sqlServer.findUser(id)
     .then(async res => {
       if(res.length) {
         ctx.status = 406
-        ctx.body = {
-          code: 406,
-          message:"用户已存在"
-        }
+        ctx.body = expectionHandle.faild("用户已存在")
       }else{
         await sqlServer.addUser([id, first_name, last_name, email])
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
-            ctx.body = {
-              code: 200,
-              message: "添加成功"
-            }
+            ctx.body = expectionHandle.success("添加成功")
           }else{
             ctx.status = 406
-            ctx.body = {
-              code: 406,
-              message: "添加失败"
-            }
+            ctx.body = expectionHandle.faild("添加失败")
           }
         })
         .catch(err => {
+          ctx.body = expectionHandle.catchError(err)
           console.log(err)
         })
       }
     })
     .catch(err => {
+      ctx.body = expectionHandle.catchError(err)
       console.log(err)
     })
+  } catch (error) {
+    ctx.body = expectionHandle.existenceId()
+    console.log(err)
   }
 })
 // 修改用户信息
 router.put('/change/:id',async (ctx,next) => {
   let id = parseInt(ctx.params.id) || ""
-  if(!id){
-    ctx.body = {
-      code: 400,
-      Error: "id不能为空"
-    }
-  }else{
+  try {
     await sqlServer.findUser(id)
     .then(async res => {
       if(!res.length) {
         ctx.status = 406
-        ctx.body = {
-          code: 406,
-          message:"用户不存在"
-        }
+        ctx.body = expectionHandle.faild("用户不存在")
       }else{
         let first_name = ctx.request.body.first_name || res[0].first_name || ""
         let last_name = ctx.request.body.last_name || res[0].last_name || ""
@@ -127,26 +102,25 @@ router.put('/change/:id',async (ctx,next) => {
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
-            ctx.body = {
-              code: 200,
-              message: "修改成功"
-            }
+            ctx.body = expectionHandle.success("修改成功")
           }else{
             ctx.status = 406
-            ctx.body = {
-              code: 406,
-              message: "修改失败"
-            }
+            ctx.body = expectionHandle.faild("修改失败")
           }
         })
         .catch(err => {
+      ctx.body = expectionHandle.catchError(err)
           console.log(err)
         })
       }
     })
     .catch(err => {
+      ctx.body = expectionHandle.catchError(err)
       console.log(err)
     })
+  } catch (error) {
+    ctx.body = expectionHandle.existenceId()
+    console.log(error)
   }
 })
 module.exports = router

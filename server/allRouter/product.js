@@ -1,5 +1,7 @@
 const router = require('koa-router')()
 const sqlServer = require('../db/mySqlConfig')
+const expectionHandle = require('../expectionHandle')
+
 // 路由前缀
 router.prefix('/product')
 
@@ -13,12 +15,7 @@ router.get('/all',async (ctx, next) => {
 // 删除产品
 router.del('/delete/:id', async (ctx, next) => {
   let id = parseInt(ctx.params.id) || ""
-  if(!id) {
-    ctx.body = {
-      code: 400,
-      Error: "id不能为空"
-    }
-  }else{
+  try {
     await sqlServer.findProduct(id)
     .then(async res => {
       if(res.length) {
@@ -26,26 +23,27 @@ router.del('/delete/:id', async (ctx, next) => {
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
-            ctx.body = {
-              code:200,
-              message:"删除成功"
-            }
+            ctx.body = expectionHandle.success("删除成功")
+          }else{
+            ctx.status = 406
+            ctx.body = expectionHandle.faild("删除失败")
           }
         })
         .catch(err => {
+          expectionHandle.catchError(err)
           console.log(err)
         })
       }else{
         // ctx.status = 204
-        ctx.body = {
-          code:204,
-          message:"无效id"
-        }
+        ctx.body = expectionHandle.invalidId()
       }
     })
     .catch(err => {
       console.log(err)
     })
+  } catch (error) {
+    ctx.body = expectionHandle.existenceId()
+    console.log(error)
   }
 })
 
@@ -56,62 +54,49 @@ router.post('/add', async (ctx,next) => {
   let name = ctx.request.body.name || ""
   let description = ctx.request.body.description || ""
   let weight = ctx.request.body.weight || ""
-  if(!id){
-    throw new Error("id不能为空")
-  }else{
+  try {
     await sqlServer.findProduct(id)
     .then(async res => {
       if(res.length) {
         ctx.status = 406
-        ctx.body = {
-          code: 406,
-          message:"产品已存在"
-        }
+        ctx.body = expectionHandle.faild("无效的id")
       }else{
         await sqlServer.addProduct([id, name, description, weight])
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
-            ctx.body = {
-              code: 200,
-              message: "添加成功"
-            }
+            ctx.body = expectionHandle.success("添加成功")
           }else{
             ctx.status = 406
-            ctx.body = {
-              code: 406,
-              message: "添加失败"
-            }
+            ctx.body = expectionHandle.success("添加失败")
           }
         })
         .catch(err => {
+          ctx.body = expectionHandle.catchError(err)
           console.log(err)
         })
       }
     })
     .catch(err => {
+      ctx.body = expectionHandle.catchError(err)
       console.log(err)
     })
+  } catch (error) {
+    ctx.body = expectionHandle.existenceId()
+    console.log(error)
   }
 })
 
 // 修改产品
 router.put('/change/:id',async (ctx,next) => {
   let id = parseInt(ctx.params.id) || ""
-  if(!id){
-    ctx.body = {
-      code: 400,
-      Error: "id不能为空"
-    }
-  }else{
+
+  try {
     await sqlServer.findProduct(id)
     .then(async res => {
       if(!res.length) {
         ctx.status = 406
-        ctx.body = {
-          code: 406,
-          message:"产品不存在"
-        }
+        ctx.body = expectionHandle.faild("产品不存在")
       }else{
         let name = ctx.request.body.name || res[0].name ||""
         let description = ctx.request.body.description || res[0].description || ""
@@ -120,26 +105,25 @@ router.put('/change/:id',async (ctx,next) => {
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
-            ctx.body = {
-              code: 200,
-              message: "修改成功"
-            }
+            ctx.body = expectionHandle.success("修改成功")
           }else{
             ctx.status = 406
-            ctx.body = {
-              code: 406,
-              message: "修改失败"
-            }
+            ctx.body = expectionHandle.faild("修改失败")
           }
         })
         .catch(err => {
+          ctx.body = expectionHandle.catchError(err)
           console.log(err)
         })
       }
     })
     .catch(err => {
+      ctx.body = expectionHandle.catchError(err)
       console.log(err)
     })
+  } catch (error) {
+    ctx.body = expectionHandle.existenceId()
+    console.log(error)
   }
 })
 module.exports = router
