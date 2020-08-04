@@ -1,12 +1,13 @@
 const router = require('koa-router')()
-const sqlServer = require('../db/mySqlConfig')
+// const sqlServer = require('../db/mySqlConfig')
 const expectionHandle = require('../expectionHandle')
+const seqlize = require('../seqlize/index')
 // 路由前缀
 router.prefix('/user')
 
 // 获取用户列表
 router.get('/all',async (ctx, next) => {
-  await sqlServer.getAllUser()
+  await seqlize.getAllUser()
   .then(res => {
     ctx.body = res
   })
@@ -15,10 +16,10 @@ router.get('/all',async (ctx, next) => {
 router.del('/delete/:id',async (ctx, next) => {
   let id = parseInt(ctx.params.id) || ""
   try {
-    await sqlServer.findUser(id)
+    await seqlize.findUser(id)
     .then(async res => {
       if(res.length){
-        await sqlServer.deleteUser(id)
+        await seqlize.deleteUser(id)
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
@@ -54,13 +55,13 @@ router.post('/add', async (ctx,next) => {
   let last_name = ctx.request.body.last_name || ""
   let email = ctx.request.body.email || ""
   try {
-    await sqlServer.findUser(id)
+    await seqlize.findUser(id)
     .then(async res => {
       if(res.length) {
         ctx.status = 406
         ctx.body = expectionHandle.faild("用户已存在")
       }else{
-        await sqlServer.addUser([id, first_name, last_name, email])
+        await seqlize.addUser([id, first_name, last_name, email])
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
@@ -82,14 +83,14 @@ router.post('/add', async (ctx,next) => {
     })
   } catch (error) {
     ctx.body = expectionHandle.existenceId()
-    console.log(err)
+    console.log(error)
   }
 })
 // 修改用户信息
 router.put('/change/:id',async (ctx,next) => {
   let id = parseInt(ctx.params.id) || ""
   try {
-    await sqlServer.findUser(id)
+    await seqlize.findUser(id)
     .then(async res => {
       if(!res.length) {
         ctx.status = 406
@@ -98,7 +99,7 @@ router.put('/change/:id',async (ctx,next) => {
         let first_name = ctx.request.body.first_name || res[0].first_name || ""
         let last_name = ctx.request.body.last_name || res[0].last_name || ""
         let email = ctx.request.body.email || res[0].email || ""
-        await sqlServer.changeUser([first_name, last_name, email,id])
+        await seqlize.changeUser([first_name, last_name, email],id)
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200

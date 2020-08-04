@@ -1,14 +1,15 @@
 const router = require('koa-router')()
-const sqlServer = require('../db/mySqlConfig')
+// const seqlize = require('../db/mySqlConfig')
 const date = require('../getDate')
 const expectionHandle = require('../expectionHandle')
+const seqlize = require('../seqlize/index')
 
 // 路由前缀
 router.prefix('/order')
 
 // 获取订单列表
 router.get('/all',async (ctx, next) => {
-  await sqlServer.getAllOrder()
+  await seqlize.getAllOrder()
   .then(res => {
     ctx.body = res
   })
@@ -18,10 +19,10 @@ router.get('/all',async (ctx, next) => {
 router.del('/delete/:id', async (ctx) => {
   let id = parseInt(ctx.params.id) || ""
   try {
-    await sqlServer.findOrder(id)
+    await seqlize.findOrder(id)
     .then(async res => {
       if(res.length) {
-        await sqlServer.deleteOrder(id)
+        await seqlize.deleteOrder(id)
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
@@ -55,13 +56,13 @@ router.post('/add', async (ctx,next) => {
   let quantity = ctx.request.body.quantity || ""
   let product_id = ctx.request.body.product_id || ""
   try {
-    await sqlServer.findOrder(id)
+    await seqlize.findOrder(id)
     .then(async res => {
       if(res.length) {
         ctx.status = 406
         ctx.body = expectionHandle.faild("订单已存在")
       }else{
-        await sqlServer.addOrder([id, order_date, purchaser, quantity, product_id])
+        await seqlize.addOrder([id, order_date, purchaser, quantity, product_id])
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
@@ -91,7 +92,7 @@ router.put('/change/:id',async (ctx,next) => {
   let id = parseInt(ctx.params.id) || ""
   let order_date = date.getNowDate()
   try {
-    await sqlServer.findOrder(id)
+    await seqlize.findOrder(id)
     .then(async res => {
       if(!res.length) {
         ctx.status = 406
@@ -100,7 +101,7 @@ router.put('/change/:id',async (ctx,next) => {
         let purchaser = ctx.request.body.purchaser || res[0].purchaser ||""
         let quantity = ctx.request.body.quantity || res[0].quantity || ""
         let product_id = ctx.request.body.product_id || res[0].product_id || ""
-        await sqlServer.changeOrder([order_date, purchaser, quantity, product_id,id])
+        await seqlize.changeOrder([order_date, purchaser, quantity, product_id],id)
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200

@@ -1,13 +1,14 @@
 const router = require('koa-router')()
-const sqlServer = require('../db/mySqlConfig')
+// const seqlize = require('../db/mySqlConfig')
 const expectionHandle = require('../expectionHandle')
+const seqlize = require('../seqlize/index')
 
 // 路由前缀
 router.prefix('/product')
 
 // 获取产品列表
 router.get('/all',async (ctx, next) => {
-  await sqlServer.getAllProduct()
+  await seqlize.getAllProduct()
   .then(res => {
     ctx.body = res
   })
@@ -16,10 +17,10 @@ router.get('/all',async (ctx, next) => {
 router.del('/delete/:id', async (ctx, next) => {
   let id = parseInt(ctx.params.id) || ""
   try {
-    await sqlServer.findProduct(id)
+    await seqlize.findProduct(id)
     .then(async res => {
       if(res.length) {
-        await sqlServer.deleteProduct(id)
+        await seqlize.deleteProduct(id)
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
@@ -55,13 +56,13 @@ router.post('/add', async (ctx,next) => {
   let description = ctx.request.body.description || ""
   let weight = ctx.request.body.weight || ""
   try {
-    await sqlServer.findProduct(id)
+    await seqlize.findProduct(id)
     .then(async res => {
       if(res.length) {
         ctx.status = 406
         ctx.body = expectionHandle.faild("无效的id")
       }else{
-        await sqlServer.addProduct([id, name, description, weight])
+        await seqlize.addProduct([id, name, description, weight])
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
@@ -92,7 +93,7 @@ router.put('/change/:id',async (ctx,next) => {
   let id = parseInt(ctx.params.id) || ""
 
   try {
-    await sqlServer.findProduct(id)
+    await seqlize.findProduct(id)
     .then(async res => {
       if(!res.length) {
         ctx.status = 406
@@ -101,7 +102,7 @@ router.put('/change/:id',async (ctx,next) => {
         let name = ctx.request.body.name || res[0].name ||""
         let description = ctx.request.body.description || res[0].description || ""
         let weight = ctx.request.body.weight || res[0].weight || ""
-        await sqlServer.changeOrder([name, description, weight,id])
+        await seqlize.changeProduct([name, description, weight],id)
         .then(res => {
           if(res.affectedRows !== 0) {
             ctx.status = 200
