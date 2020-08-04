@@ -14,19 +14,15 @@ const sequelize = new Sequelize(defaultConfig.database.DATABASE, defaultConfig.d
   },
   logging: false // 阻止sequelize输出到控制台
 })
-
-// 定义模型
-// const getAllUser = sequelize.define('getUser', {
-//   title: {
-//     type: Sequelize.INTEGER,
-//     primaryKey: true, // 主键
-//     autoIncrement: true, // 自增
-//     comment: '自增id' // 注释：只在代码中有效
-//   },
-//   title: {
-//     type: Sequelize.STRING
-//   },
-//   body: {
-//     type: Sequelize.STRING
-//   }
-// })
+// 测试连接是否成功
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('数据库连接成功')
+  })
+  .catch(err => {
+    console.error('无法连接到数据库', err)
+  })
+module.exports = {
+  sequelize
+}
