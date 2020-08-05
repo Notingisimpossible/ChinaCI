@@ -16,6 +16,7 @@ const findUser = async (id) => {
 }
 // 添加用户
 const addUser = async (data) => {
+  console.log(data)
   let model = {
     id: data[0],
     first_name: data[1],
