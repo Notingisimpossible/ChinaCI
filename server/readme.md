@@ -18,3 +18,4 @@
   2. 使用koa2-cors解决
   3. 使用koa-bodyparser中间件(可以解析通过post来传递的表单，json数据，或者上传文件)
   7. 在定义数据模型时，需要使用define第三个参数 {timestamps: false}，取消时间戳
+  8. 测试
