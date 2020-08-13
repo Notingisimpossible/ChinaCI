@@ -12,11 +12,13 @@ const student = require('./newRouter/student')
 // 处理跨域
 app.use(cors({
   origin: function(ctx) {
-    if(ctx.url === '/test') {
-      return false
-    }
+    // console.log(ctx,ctx.request.header.origin)
     return '*'
   },
+  exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+  exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+  maxAge: 5,
+  credentials: true,
   allowMethods:['GET', 'POST', 'DELETE', 'PUT'],
   allowHeaders: ['Content-Type', 'Authorization', 'Accept']
 }))
