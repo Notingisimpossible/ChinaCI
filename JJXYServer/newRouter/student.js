@@ -9,7 +9,18 @@ router.get('/CJ/:id', async (ctx, next) => {
   if(id) {
     await sqlServer.findCJById(id)
     .then(res => {
-      ctx.body = res.rows
+      ctx.body = {
+        "ID":res.ID,
+        "姓名":res.XM,
+        "课程名称": res.KCMC,
+        "班级名称": res.BJMC,
+        "学期": res.XQ,
+        "总评成绩": res.ZPCJ,
+      }
+    })
+    .catch(err => {
+      ctx.body = err
+      console.log(err)
     })
   }
 })
