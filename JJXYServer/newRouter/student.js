@@ -4,10 +4,18 @@ const sqlServer = require('../db/index')
 router.prefix('/student')
 
 // 获取指定id的学生成绩信息
-router.get('/CJ/:id', async (ctx, next) => {
-  let id = ctx.params.id || ""
-  if(id) {
-    await sqlServer.findCJById(id)
+router.get('/CJ', async (ctx, next) => {
+  let url = ctx.request.url.split("?")[1].split("&")
+  let value = url.reduce((preItem, item) => {
+    let key = item.split("=")[0] || ""
+    let val = item.split("=")[1] || ""
+    if(!preItem[key]) {
+      preItem[key] = val
+    }
+    return preItem
+  },{})
+  if(value) {
+    await sqlServer.findCJById(value)
     .then(res => {
       ctx.body = {
         "ID":res.ID,

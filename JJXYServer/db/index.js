@@ -1,8 +1,9 @@
 const execute = require("./excuteSql");
+const allSql = require("../abstractSql")
 
 // 查询指定id的成绩
-const findCJById = async(id) => {
-  let sql = `SELECT * FROM XYC_V_TJX_CJXX where id='${id}'`
+const findCJById = async(value) => {
+  let sql = await allSql.findSql(value)
   return await execute(sql)
 }
 

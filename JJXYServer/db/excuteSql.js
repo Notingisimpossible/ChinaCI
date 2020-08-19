@@ -3,17 +3,17 @@ const config = require('./defaultConfig')
 
 
 // 封装连接池
-(async ()=>{
-	try{
-		await oracledb.createPool(config);
-	     var connection =  await oracledb.getPool('Hello').getConnection();
-	     var result = await connection.execute('select 123 from dual');
-	     await connection.close();
-	     console.log(result)
-	}catch(err){
-	    console.log(err.message)
-	}
-})();
+// (async ()=>{
+// 	try{
+// 		await oracledb.createPool(config);
+// 	     var connection =  await oracledb.getPool('Hello').getConnection();
+// 	     var result = await connection.execute('select 123 from dual');
+// 	     await connection.close();
+// 	     console.log(result)
+// 	}catch(err){
+// 	    console.log(err.message)
+// 	}
+// })();
 
 
 // // 封装查询器
