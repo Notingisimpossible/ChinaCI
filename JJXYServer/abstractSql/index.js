@@ -5,4 +5,4 @@ const findSql = (value) => {
 
 module.exports = {
   findSql
-}
+} 
