@@ -1,19 +1,14 @@
 const router = require('koa-router')();
 const sqlServer = require('../db/index')
+const expectionHandle = require('../expectionHandle')
+const data = require('../mock/data')
 
 router.prefix('/student')
 
 // 获取指定id的学生成绩信息
-router.get('/CJ', async (ctx, next) => {
-  let url = ctx.request.url.split("?")[1].split("&")
-  let value = url.reduce((preItem, item) => {
-    let key = item.split("=")[0] || ""
-    let val = item.split("=")[1] || ""
-    if(!preItem[key]) {
-      preItem[key] = val
-    }
-    return preItem
-  },{})
+router.get('/cj', async (ctx, next) => {
+  console.log(ctx.url)
+  let value = ctx.request.query
   if(value) {
     await sqlServer.findCJById(value)
     .then(res => {
@@ -32,6 +27,39 @@ router.get('/CJ', async (ctx, next) => {
     })
   }
 })
+// 获取课程表信息
+router.get('/kcb',async (ctx, next) => {
+  console.log(ctx.url)
+  let value = ctx.request.query
+  if(value) {
+    // await sqlServer.findKCBById(value)
+    // .then(res => {
+      ctx.body = data.classInfo
+    // })
+    // .catch(err => {
+    //   ctx.body = err
+    //   console.log(err)
+    // })
+  }
+})
 
-
+// 查询一卡通基本信息
+router.get('/card',(ctx,next) => {
+  console.log(ctx.url)
+  let value = ctx.request.query
+  if(value.info === "info") {
+    // await sqlServer.findCardById(value)
+    // .then(res => {
+      ctx.body = data.studentCardInfo
+    // })
+    // .catch(err => {
+    //   ctx.body = err
+    //   console.log(err)
+    // })
+  }else if(value.info === "money"){
+    ctx.body = data.takeMoneyInfo
+  }else{
+    ctx.body = expectionHandle.faild("无效的查询路径")
+  }
+})
 module.exports = router
