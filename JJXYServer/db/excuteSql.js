@@ -28,8 +28,10 @@ const execute = (sql, value = [], opts = {}) => {
           await conn.execute(sql,value,(err,result) => {
             if(err){
               console.log(err)
-            }else{
+            }else if(result.rows.length != 0){
               resolve(BeginOBJ(result))
+            }else{
+              reject("查询信息有误")
             }
           })
         }
@@ -50,6 +52,7 @@ const execute = (sql, value = [], opts = {}) => {
 
 // 将结果转化为对象
 const BeginOBJ = (res) => {
+  console.log(res)
   let i = 0
   let result = res.metaData.reduce((lastItem,item) => {
     lastItem[item.name] = res.rows[0][i++]
