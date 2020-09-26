@@ -12,9 +12,6 @@ const order = require('./allRouter/order')
 // 处理跨域
 app.use(cors({
   origin: function(ctx) {
-    if(ctx.url === '/test') {
-      return false
-    }
     return '*'
   },
   allowMethods:['GET', 'POST', 'DELETE', 'PUT'],

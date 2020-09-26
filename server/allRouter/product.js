@@ -8,6 +8,7 @@ router.prefix('/product')
 
 // 获取产品列表
 router.get('/all',async (ctx, next) => {
+  console.log(ctx.request.url)
   await seqlize.getAllProduct()
   .then(res => {
     ctx.body = res
@@ -15,6 +16,7 @@ router.get('/all',async (ctx, next) => {
 })
 // 删除产品
 router.del('/delete/:id', async (ctx, next) => {
+  console.log(ctx.request.url)
   let id = parseInt(ctx.params.id) || ""
   try {
     await seqlize.findProduct(id)
@@ -50,6 +52,7 @@ router.del('/delete/:id', async (ctx, next) => {
 
 // 添加产品
 router.post('/add', async (ctx,next) => {
+  console.log(ctx.request.url)
   // console.log(ctx.request.body)
   let id = ctx.request.body.id || ""
   let name = ctx.request.body.name || ""

@@ -7,6 +7,7 @@ router.prefix('/user')
 
 // 获取用户列表
 router.get('/all',async (ctx, next) => {
+  console.log(ctx.request.url)
   await seqlize.getAllUser()
   .then(res => {
     ctx.body = res
@@ -14,6 +15,7 @@ router.get('/all',async (ctx, next) => {
 })
 // 删除指定用户
 router.del('/delete/:id',async (ctx, next) => {
+  console.log(ctx.request.url)
   let id = parseInt(ctx.params.id) || ""
   try {
     await seqlize.findUser(id)
@@ -49,6 +51,7 @@ router.del('/delete/:id',async (ctx, next) => {
 })
 // 添加用户
 router.post('/add', async (ctx,next) => {
+  console.log(ctx.request.url)
   // console.log(ctx.request.body)
   let id = ctx.request.body.id || ""
   let first_name = ctx.request.body.first_name || ""
@@ -88,6 +91,7 @@ router.post('/add', async (ctx,next) => {
 })
 // 修改用户信息
 router.put('/change/:id',async (ctx,next) => {
+  console.log(ctx.request.url)
   let id = parseInt(ctx.params.id) || ""
   try {
     await seqlize.findUser(id)

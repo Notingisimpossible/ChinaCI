@@ -9,6 +9,7 @@ router.prefix('/order')
 
 // 获取订单列表
 router.get('/all',async (ctx, next) => {
+  console.log(ctx.request.url)
   await seqlize.getAllOrder()
   .then(res => {
     ctx.body = res
@@ -17,6 +18,7 @@ router.get('/all',async (ctx, next) => {
 
 // 删除订单
 router.del('/delete/:id', async (ctx) => {
+  console.log(ctx.request.url)
   let id = parseInt(ctx.params.id) || ""
   try {
     await seqlize.findOrder(id)
@@ -49,6 +51,7 @@ router.del('/delete/:id', async (ctx) => {
 })
 // 添加订单
 router.post('/add', async (ctx,next) => {
+  console.log(ctx.request.url)
   // console.log(ctx.request.body)
   let id = ctx.request.body.id || ""
   let order_date = date.getNowDate()
@@ -89,6 +92,7 @@ router.post('/add', async (ctx,next) => {
 })
 // 修改订单
 router.put('/change/:id',async (ctx,next) => {
+  console.log(ctx.request.url)
   let id = parseInt(ctx.params.id) || ""
   let order_date = date.getNowDate()
   try {
